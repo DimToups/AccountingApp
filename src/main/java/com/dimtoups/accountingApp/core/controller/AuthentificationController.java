@@ -5,6 +5,7 @@ import com.dimtoups.accountingApp.core.helper.JwtHelper;
 import com.dimtoups.accountingApp.core.mapper.user.UserControllerDtoToServiceDtoMapper;
 import com.dimtoups.accountingApp.core.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +34,11 @@ public class AuthentificationController {
 
   @PostMapping("/signup")
   public ResponseEntity<Void> signup(@Valid @RequestBody PostSignupRequestDto postSignupRequestDto) {
-    userService.createUser(userControllerDtoToServiceDtoMapper.createUser(postSignupRequestDto));
+    try {
+      userService.createUser(userControllerDtoToServiceDtoMapper.createUser(postSignupRequestDto));
+    } catch (DuplicateKeyException e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 

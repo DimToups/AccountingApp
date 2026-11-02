@@ -1,8 +1,9 @@
-package com.dimtoups.accountingApp.core.service;
+package com.dimtoups.accountingApp.core.tests.service;
 
 import com.dimtoups.accountingApp.core.entity.authority.Authority;
 import com.dimtoups.accountingApp.core.entity.user.User;
 import com.dimtoups.accountingApp.core.repository.AuthorizationRepository;
+import com.dimtoups.accountingApp.core.service.UserService;
 import com.dimtoups.accountingApp.core.service.dto.users.DeleteUserDto;
 import com.dimtoups.accountingApp.core.service.dto.users.UpdateUserDto;
 import org.hibernate.FetchNotFoundException;
@@ -16,25 +17,16 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import java.util.List;
 import java.util.Optional;
 
+import static com.dimtoups.accountingApp.core.constants.DefaultUsersConstants.*;
+import static com.dimtoups.accountingApp.core.constants.UnknownUsersConstants.UNKNOWN_USERNAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @SqlGroup({
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:sampleDatabases/CreateUserServiceSampleDB.sql"),
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:sampleDatabases/DeleteUserServiceSampleDB.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:sampleDatabases/default/CreateDefaultUser.sql"),
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:sampleDatabases/default/DeleteDefaultUser.sql")
 })
 public class UserServiceTest {
-  /**
-   * A generic username present in the CreateUserServiceSampleDB.sql script.
-   * A {@link User} should be found in the test database with this username.
-   */
-  public static final String BASIC_USERNAME = "Pizza";
-
-  /**
-   * A username not present in the database.
-   * This username should be used for tests with unknown usernames.
-   */
-  public static final String UNKNOWN_USERNAME = "Pineapple";
 
   @Autowired
   private UserService userService;
@@ -47,7 +39,7 @@ public class UserServiceTest {
     @Test
     public void isUserFoundGivenACorrectUsername() {
       // Given
-      String username = BASIC_USERNAME;
+      String username = DEFAULT_USERNAME;
 
       // When
       Optional<User> optionalUser = userService.findByUsername(username);
@@ -75,8 +67,8 @@ public class UserServiceTest {
     @Test
     public void isReturnedUserUpdated() {
       // Given
-      User originalUserCopy = userService.findByUsername(BASIC_USERNAME).get();
-      UpdateUserDto updatedUser = new UpdateUserDto(BASIC_USERNAME, "Ananas", null);
+      User originalUserCopy = userService.findByUsername(DEFAULT_USERNAME).get();
+      UpdateUserDto updatedUser = new UpdateUserDto(DEFAULT_USERNAME, "Ananas", null);
 
       // When
       User updatedDbUser = userService.updateUser(updatedUser);
@@ -88,21 +80,21 @@ public class UserServiceTest {
     @Test
     public void isDatabaseUserUpdated() {
       // Given
-      User originalUserCopy = userService.findByUsername(BASIC_USERNAME).get();
-      UpdateUserDto updatedUser = new UpdateUserDto(BASIC_USERNAME, null, "Ananas");
+      User originalUserCopy = userService.findByUsername(DEFAULT_USERNAME).get();
+      UpdateUserDto updatedUser = new UpdateUserDto(DEFAULT_USERNAME, null, "Ananas");
 
       // When
       userService.updateUser(updatedUser);
 
       // Then
-      assertNotEquals(originalUserCopy, userService.findByUsername(BASIC_USERNAME).get());
+      assertNotEquals(originalUserCopy, userService.findByUsername(DEFAULT_USERNAME).get());
     }
 
     @Test
     public void areUnupdatedVariablesUnchanged() {
       // Given
-      User originalUserCopy = userService.findByUsername(BASIC_USERNAME).get();
-      UpdateUserDto updatedUser = new UpdateUserDto(BASIC_USERNAME, null, "Ananas");
+      User originalUserCopy = userService.findByUsername(DEFAULT_USERNAME).get();
+      UpdateUserDto updatedUser = new UpdateUserDto(DEFAULT_USERNAME, null, "Ananas");
 
       // When
       User updatedDbUser = userService.updateUser(updatedUser);
@@ -114,13 +106,13 @@ public class UserServiceTest {
     @Test
     public void isDatabaseUserEnabledVariableIgnored() {
       // Given
-      UpdateUserDto updatedUser = new UpdateUserDto(BASIC_USERNAME, null, null);
+      UpdateUserDto updatedUser = new UpdateUserDto(DEFAULT_USERNAME, null, null);
 
       // When
       userService.updateUser(updatedUser);
 
       // Then
-      assertTrue(userService.findByUsername(BASIC_USERNAME).get().isEnabled());
+      assertTrue(userService.findByUsername(DEFAULT_USERNAME).get().isEnabled());
     }
 
     @Test
@@ -139,7 +131,7 @@ public class UserServiceTest {
     @Test
     public void isTheUserDeletedWhenGivenItsUsername() {
       // Given
-      DeleteUserDto deleteUserDto = new DeleteUserDto(BASIC_USERNAME);
+      DeleteUserDto deleteUserDto = new DeleteUserDto(DEFAULT_USERNAME);
       Optional<User> originalUser = userService.findByUsername(deleteUserDto.username());
 
       // When
@@ -154,7 +146,7 @@ public class UserServiceTest {
     @Test
     public void areAuthoritiesDeletedWithTheUser() {
       // Given
-      User originalUser = userService.findByUsername(BASIC_USERNAME).get();
+      User originalUser = userService.findByUsername(DEFAULT_USERNAME).get();
       List<Authority> originalAuthorities = authorizationRepository.findAllByUser(originalUser);
       DeleteUserDto deleteUserDto = new DeleteUserDto(originalUser.getUsername());
 
