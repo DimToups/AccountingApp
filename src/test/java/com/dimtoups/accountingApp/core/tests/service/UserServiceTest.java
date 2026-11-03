@@ -91,7 +91,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void areUnupdatedVariablesUnchanged() {
+    public void areNullVariablesIgnored() {
       // Given
       User originalUserCopy = userService.findByUsername(DEFAULT_USERNAME).get();
       UpdateUserDto updatedUser = new UpdateUserDto(DEFAULT_USERNAME, null, "Ananas");
@@ -101,6 +101,19 @@ public class UserServiceTest {
 
       // Then
       assertEquals(originalUserCopy.getFirstname(), updatedDbUser.getFirstname());
+    }
+
+    @Test
+    public void areEmptyVariablesSetToNull() {
+      // Given
+      UpdateUserDto updatedUser = new UpdateUserDto(DEFAULT_USERNAME, "", "");
+
+      // When
+      User updatedDbUser = userService.updateUser(updatedUser);
+
+      // Then
+      assertNull(updatedDbUser.getFirstname());
+      assertNull(updatedDbUser.getLastname());
     }
 
     @Test

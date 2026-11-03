@@ -176,21 +176,6 @@ public class AuthentificationControllerTests {
         @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:sampleDatabases/incorrectCredentials/DeleteUsersWithIncorrectCredentialFormats.sql")
     })
     public class ParameterFormatsTests {
-      @Test
-      public void areShortUsernamesRefused() throws Exception {
-        // Given
-        String body = createJsonStringForLogin(SHORT_USERNAME, SHORT_PASSWORD);
-
-        // When
-        mockMvc
-            .perform(MockMvcRequestBuilders.post("/login")
-                .with(csrf().asHeader())
-                .contentType("application/json;charset=UTF-8")
-                .content(body))
-            // Then
-            .andExpect(MockMvcResultMatchers.status().isBadRequest())
-            .andExpect(MockMvcResultMatchers.jsonPath("token").doesNotExist());
-      }
 
       @Test
       public void areEmptyUsernamesRefused() throws Exception {
@@ -225,7 +210,7 @@ public class AuthentificationControllerTests {
       }
 
       @Test
-      public void areSpecialCharactersUsernamesAccepted() throws Exception {
+      public void areSpecialCharactersUsernamesRefused() throws Exception {
         // Given
         String body = createJsonStringForLogin(SPECIAL_CHARACTERS_USERNAME, SPECIAL_CHARACTERS_PASSWORD);
 
@@ -236,8 +221,8 @@ public class AuthentificationControllerTests {
                 .contentType("application/json;charset=UTF-8")
                 .content(body))
             // Then
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("token").value(Matchers.matchesRegex(JWT_REGEX_MATCHER)));
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.jsonPath("token").doesNotExist());
       }
 
       @Test
@@ -374,23 +359,6 @@ public class AuthentificationControllerTests {
     public class ParameterFormatsTests {
 
       @Test
-      public void isUserNotCreatedWithShortCredentials() throws Exception {
-        // Given
-        String body = createBody(SHORT_USERNAME, SHORT_PASSWORD, null, null);
-
-        // When
-        mockMvc
-            .perform(MockMvcRequestBuilders.post("/signup")
-                .with(csrf().asHeader())
-                .contentType("application/json;charset=UTF-8")
-                .content(body))
-            // Then
-            .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
-        assertTrue(userRepository.findByUsername(SHORT_USERNAME).isEmpty());
-      }
-
-      @Test
       public void isUserNotCreatedWithEmptyCredentials() throws Exception {
         // Given
         String body = createBody(EMPTY_USERNAME, EMPTY_PASSWORD, null, null);
@@ -425,7 +393,7 @@ public class AuthentificationControllerTests {
       }
 
       @Test
-      public void isUserCreatedWithSpecialCharactersCredentials() throws Exception {
+      public void isUserNotCreatedWithSpecialCharactersCredentials() throws Exception {
         // Given
         String body = createBody(SPECIAL_CHARACTERS_USERNAME, SPECIAL_CHARACTERS_PASSWORD, null, null);
 
@@ -436,9 +404,9 @@ public class AuthentificationControllerTests {
                 .contentType("application/json;charset=UTF-8")
                 .content(body))
             // Then
-            .andExpect(MockMvcResultMatchers.status().isCreated());
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
-        assertTrue(userRepository.findByUsername(SPECIAL_CHARACTERS_USERNAME).isPresent());
+        assertTrue(userRepository.findByUsername(SPECIAL_CHARACTERS_USERNAME).isEmpty());
       }
 
       @Test

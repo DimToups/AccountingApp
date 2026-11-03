@@ -9,6 +9,9 @@ import com.dimtoups.accountingApp.core.mapper.user.UserControllerDtoToServiceDto
 import com.dimtoups.accountingApp.core.mapper.user.UserResponseDbMapper;
 import com.dimtoups.accountingApp.core.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.hibernate.FetchNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +34,9 @@ public class UserController {
 
   @GetMapping("/user/{username}")
   public ResponseEntity<UserResponseDto> getUser(
-      @PathVariable String username,
+      @PathVariable
+      @Size(min = User.USERNAME_MIN_LENGTH, max = User.USERNAME_MAX_LENGTH) @Pattern(regexp = "(^[a-zA-Z0-9-_.~]*$)") @NotBlank
+      String username,
       @RequestHeader(name = "Authorization") String bearerToken) {
     // Checking if the client can access the information
     if (!JwtHelper.isClientAuthorized(bearerToken, username)) {
@@ -41,11 +46,13 @@ public class UserController {
     // Finding the user
     Optional<User> optionalUser = userService.findByUsername(username);
     if (optionalUser.isEmpty()) {
+      // JwtAuthFilter should prevent from getting here by throwing a UsernameNotFoundException before even entering
+      // this method
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     UserResponseDto response = userResponseMapper.dbUserToUserResponseDto(optionalUser.get());
-    return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @DeleteMapping("/user")
@@ -61,10 +68,12 @@ public class UserController {
     try {
       userService.deleteUser(userControllerDtoToServiceDtoMapper.deleteUser(deleteUserDto));
     } catch (FetchNotFoundException e) {
+      // JwtAuthFilter should prevent from getting here by throwing a UsernameNotFoundException before even entering
+      // this method
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @PatchMapping("/user")
@@ -80,9 +89,11 @@ public class UserController {
     try {
       userService.updateUser(userControllerDtoToServiceDtoMapper.updateUser(updateUserRequestDto));
     } catch (FetchNotFoundException exception) {
+      // JwtAuthFilter should prevent from getting here by throwing a UsernameNotFoundException before even entering
+      // this method
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 }

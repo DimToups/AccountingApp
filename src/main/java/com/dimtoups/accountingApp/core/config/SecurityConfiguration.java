@@ -36,7 +36,6 @@ public class SecurityConfiguration {
         )
         .httpBasic(Customizer.withDefaults())
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.GET, "/login", "/signup").permitAll()
             .requestMatchers(HttpMethod.POST, "/login", "/signup").permitAll()
             .requestMatchers(HttpMethod.GET, "/csrfToken").permitAll()
             .anyRequest().authenticated()

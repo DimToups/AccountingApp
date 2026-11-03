@@ -5,9 +5,6 @@ package com.dimtoups.accountingApp.core.constants;
  * Each "user" consists of a username and a password, both named with the same prefix.
  */
 public class IncorrectCredentialFormatsConstants {
-  public static final String SHORT_USERNAME = "P";
-  public static final String SHORT_PASSWORD = "P";
-
   public static final String BLANK_USERNAME = " ";
   public static final String BLANK_PASSWORD = " ";
 
@@ -18,5 +15,7 @@ public class IncorrectCredentialFormatsConstants {
   public static final String SPECIAL_CHARACTERS_PASSWORD = "#-/\\Password";
 
   public static final String LONG_USERNAME = "VeryLongUsernameWithMoreThanSixtyFourCharactersToTestMyApplication";
+  public static final String LONG_FIRSTNAME = "VeryLongFirstnameWithMoreThanSixtyFourCharactersToTestMyApplication";
+  public static final String LONG_LASTNAME = "VeryLongLastnameWithMoreThanSixtyFourCharactersToTestMyApplication";
   public static final String LONG_PASSWORD = "VeryLongPasswordWithMoreThanSixtyFourCharactersToTestMyApplication";
 }

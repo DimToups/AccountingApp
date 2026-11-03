@@ -51,6 +51,26 @@ public class UserService {
     this.authorizationRepository = authorizationRepository;
   }
 
+  /**
+   * Updates a database user information of second importance (firstname, lastname).
+   * <br>
+   * Special rules applies to the update when giving a {@link UpdateUserDto}:
+   * for keeping a value unchanged, a {@code null} value has to be given.
+   * For setting a value to {@code null}, an empty string has to be given.
+   * <br>
+   * <br>
+   * Exemple with a JSON object:
+   * <br>
+   * <pre>
+   * {
+   *   username: "John", // For updating the user "John"
+   *   firstname: null,  // For letting its value unchanged in the database
+   *   lastname: ""      // For setting its value to null in the database
+   * }</pre>
+   * @param updatedUser The DTO containing the user id (username), and its updated values
+   * @return The updated database user
+   * @throws FetchNotFoundException An exception thrown when the specified username does not match any user
+   */
   public User updateUser(@Valid @NotNull UpdateUserDto updatedUser) throws FetchNotFoundException {
     // Checking if the database user exists
     Optional<User> optionalDbUser = userRepository.findByUsername(updatedUser.username());

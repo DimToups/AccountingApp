@@ -1,7 +1,5 @@
 DELETE FROM authorities
-WHERE username = 'Pizza'
-   or username = 'Perpustakaan';
+WHERE username = 'Pizza';
 
 DELETE FROM users
-WHERE username = 'Pizza'
-   or username = 'Perpustakaan';
+WHERE username = 'Pizza';
