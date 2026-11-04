@@ -12,7 +12,6 @@ public record PostLoginRequestDto(
     String username,
 
     @Size(min = User.PASSWORD_MIN_LENGTH, max = User.PASSWORD_MAX_LENGTH)
-    @Pattern(regexp = "(^[a-zA-Z0-9-_.~]*$)")
     @NotBlank
     String password) {
 }
