@@ -1,0 +1,19 @@
+<div>
+  <a href="/signup">Signup</a>
+  <h1>Accounting App</h1>
+  <div>
+    <h2>Connexion au compte</h2>
+    <form [formRoot]="loginForm">
+      <label>
+        Nom d'utilisateur
+        <input type="text" [formField]="loginForm.username" />
+      </label>
+      <br>
+      <label>
+        Mot de passe
+        <input type="password" [formField]="loginForm.password" />
+      </label>
+      <input type="submit" value="Se connecter" />
+    </form>
+  </div>
+</div>

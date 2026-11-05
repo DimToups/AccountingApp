@@ -1,0 +1,19 @@
+<div>
+  <form [formRoot]="signupForm">
+    <label>
+      Nom d'utilisateur
+      <input type="text" [formField]="signupForm.username">
+    </label>
+    <br>
+    <label>
+      Mot de passe
+      <input type="password" [formField]="signupForm.password">
+    </label>
+    <br>
+    <label>
+      Vérifiez votre mot de passe
+      <input type="password"  [formField]="signupForm.passwordCheck">
+    </label>
+    <input type="submit" value="Créer son compte" />
+  </form>
+</div>

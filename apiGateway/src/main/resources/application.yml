@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+services:
+  coreApp:
+    url: ${CORE_APP_URL}
+
+spring:
+  config:
+    import: env.properties
+  application:
+    name: API Gateway

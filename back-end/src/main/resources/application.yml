@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8181
 
 spring:
   config:
@@ -21,6 +21,12 @@ spring:
 
 client:
   url: ${FRONT_URL}
+
+logging:
+  level:
+    org:
+      springframework.web: TRACE
+      hibernate: ERROR
 
 springdoc:
   swagger-ui:
