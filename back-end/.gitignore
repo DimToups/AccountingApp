@@ -1,12 +1,6 @@
 src/*/resources/env.properties
 src/main/resources/flyway.conf
 
-# Obsidian
-.obsidian/plugins
-.obsidian/workspace.json
-.obsidian/app.json
-.obsidian/appearance.json
-
 ../HELP.md
 target/
 ../.mvn/wrapper/maven-wrapper.jar
